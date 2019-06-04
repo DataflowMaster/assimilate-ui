@@ -1,0 +1,6 @@
+{
+  "name": "Evaluations",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Evaluations.js"
+}

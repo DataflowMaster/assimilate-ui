@@ -36,6 +36,15 @@ const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
 
+///////////////////////// Assimilate
+
+const Evaluations = React.lazy(()=> import('./views/Assimilate/Evaluations'));
+const Capacities =  React.lazy( ()=> import('./views/Assimilate/Capacities'));
+const Methods = React.lazy( ()=> import('./views/Assimilate/Methods'));
+const Modules = React.lazy(()=> import('./views/Assimilate/Modules'));
+const Students = React.lazy(()=> import('./views/Assimilate/Students'));
+//////////////////////// End Assimilate
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -79,6 +88,13 @@ const routes = [
   { path: '/charts', name: 'Charts', component: Charts },
   { path: '/users', exact: true,  name: 'Users', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
+  ///////////////////////// Assimilate
+  { path: '/Assimilate/Evaluations', name: 'Evaluations', component: Evaluations },
+  { path: '/Assimilate/Capacities', name: 'Capacities', component: Capacities},
+  { path: '/Assimilate/Methods', name: 'Methods', component: Methods},
+  { path: '/Assimilate/Modules', name: 'Modules', component: Modules},
+  { path: '/Assimilate/Students', name: 'Students', component: Students},
+  //////////////////////// Assimilate
 ];
 
 export default routes;
