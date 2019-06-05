@@ -35,7 +35,7 @@ const Typography = React.lazy(() => import('./views/Theme/Typography'));
 const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
-
+const Login = React.lazy(()=> import('./views/Pages/Login'));
 ///////////////////////// Assimilate
 
 const Evaluations = React.lazy(()=> import('./views/Assimilate/Evaluations'));
@@ -46,8 +46,10 @@ const Students = React.lazy(()=> import('./views/Assimilate/Students'));
 //////////////////////// End Assimilate
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
+  // { path: '/', exact: true, name: 'login', component: Login },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/theme', exact: true, name: 'Theme', component: Colors },
   { path: '/theme/colors', name: 'Colors', component: Colors },
