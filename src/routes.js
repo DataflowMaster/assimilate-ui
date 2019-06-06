@@ -35,7 +35,7 @@ const Typography = React.lazy(() => import('./views/Theme/Typography'));
 const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
-const Login = React.lazy(()=> import('./views/Pages/Login'));
+const Login = React.lazy(()=> import('./views/Assimilate/Login'));
 ///////////////////////// Assimilate
 
 const Evaluations = React.lazy(()=> import('./views/Assimilate/Evaluations'));

@@ -1,8 +1,43 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import {
+  Alert,
+  Button,
+  Card,
+  CardBody,
+  CardGroup,
+  Col,
+  Container,
+  Form,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Row
+} from 'reactstrap';
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.handleChangeUser = this.handleChangeUser.bind(this);
+    this.handleChangePass = this.handleChangePass.bind(this);
+    this.handleSetInfo = this.handleSetInfo.bind(this);
+    this.state = {
+      user: '',
+      pass : '',
+      info: ''
+    };
+  }
+  handleSetInfo(text){
+    this.setState({info: text })
+  }
+  handleChangeUser(e) {
+    this.setState({ user: e.target.value });
+  }
+  handleChangePass(e) {
+    this.setState({ pass: e.target.value });
+  }
+
   render() {
     return (
       <div className="app flex-row align-items-center">
@@ -13,7 +48,7 @@ class Login extends Component {
                 <Card className="p-4">
                   <CardBody>
                     <Form>
-                      <h1>Login</h1>
+                      <h1 >Hello {this.state.user}</h1>
                       <p className="text-muted">Sign In to your account</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
@@ -21,7 +56,7 @@ class Login extends Component {
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" placeholder="Username" autoComplete="username" />
+                        <Input type="text" placeholder="Username"  onChange={this.handleChangeUser} autoComplete="username" />
                       </InputGroup>
                       <InputGroup className="mb-4">
                         <InputGroupAddon addonType="prepend">
@@ -29,13 +64,15 @@ class Login extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" placeholder="Password" autoComplete="current-password" />
+                        <Input type="password" placeholder="Password"  onChange={this.handleChangePass} autoComplete="current-password" />
                       </InputGroup>
+                      {/*<Alert color="danger">{this.state.info}</Alert>*/}
                       <Row>
                         <Col xs="6">
+
                           <Button color="primary" className="px-4" onClick={
                             () => {
-                              this.props.onButtonClick();
+                              this.handleSetInfo(this.props.onButtonClick(this.state.user,this.state.pass));
                             }
                           }
                           >Login</Button>

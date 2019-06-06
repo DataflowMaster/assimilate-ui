@@ -3,12 +3,11 @@ class auth {
     this.authenticated = false;
   }
 
-  login(cb) {
-    this.authenticated = true;
-  }
-
-  logout(cb) {
-    this.authenticated = false;
+  login(user,pass) {
+    if(user === "admin" && pass === "admin")
+      this.authenticated = true
+    else
+      return "Fail to connection. Try again"
   }
 
   isAuthenticated = () => {
