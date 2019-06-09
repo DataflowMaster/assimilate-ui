@@ -28,7 +28,7 @@ class Modals extends Component {
 
   toggle() {
     this.setState({
-      modal: !this.state.modal,
+      modalAdd: !this.state.modalAdd,
     });
   }
 
@@ -85,7 +85,7 @@ class Modals extends Component {
               </CardHeader>
               <CardBody>
                 <Button onClick={this.toggle} className="mr-1">Launch demo modal</Button>
-                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                <Modal isOpen={this.state.modalAdd} toggle={this.toggle} className={this.props.className}>
                   <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
                   <ModalBody>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore

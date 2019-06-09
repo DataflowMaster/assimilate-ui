@@ -9,25 +9,25 @@ export default {
         // text: 'NEW',
       },
     },
-    {
-      title: true,
-      name: 'management',
-      wrapper: {            // optional wrapper object
-        element: '',        // required valid HTML5 element tag
-        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
-      },
-      class: ''             // optional class names space delimited list for title item ex: "text-center"
-    },
+    // {
+    //   title: true,
+    //   name: 'management',
+    //   wrapper: {            // optional wrapper object
+    //     element: '',        // required valid HTML5 element tag
+    //     attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+    //   },
+    //   class: ''             // optional class names space delimited list for title item ex: "text-center"
+    // },
     //////////////////////////////////// Complemented for Assimilate
-    {
-      name: 'Students',
-      url: '/Assimilate/Students',
-      icon: 'icon-people'
-    },
     {
       name: 'Modules',
       url: '/Assimilate/Modules',
       icon: 'icon-layers'
+    },
+    {
+      name: 'Students',
+      url: '/Assimilate/Students',
+      icon: 'icon-people'
     },
     {
       name: 'Methods',

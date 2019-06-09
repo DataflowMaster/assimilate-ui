@@ -48,7 +48,7 @@ class Login extends Component {
                 <Card className="p-4">
                   <CardBody>
                     <Form>
-                      <h1 >Hello {this.state.user}</h1>
+                      <h1 >Hi! {this.state.user}</h1>
                       <p className="text-muted">Sign In to your account</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
@@ -75,10 +75,10 @@ class Login extends Component {
                               this.handleSetInfo(this.props.onButtonClick(this.state.user,this.state.pass));
                             }
                           }
-                          >Login</Button>
+                          >Entrar</Button>
                         </Col>
                         <Col xs="6" className="text-right">
-                          <Button color="link" className="px-0">Forgot password?</Button>
+                          <Button color="link" className="px-0"> forgot password?</Button>
                         </Col>
                       </Row>
                     </Form>
@@ -88,10 +88,9 @@ class Login extends Component {
                   <CardBody className="text-center">
                     <div>
                       <h2>Sign up</h2>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua.</p>
+                      <p>Begin now to recording the activities of your students and evaluate more effectively the capabilities of each one.</p>
                       <Link to="/register">
-                        <Button color="primary" className="mt-3" active tabIndex={-1}>Register Now!</Button>
+                        <Button color="primary" className="mt-3" active tabIndex={-1}>Let's go!</Button>
                       </Link>
                     </div>
                   </CardBody>

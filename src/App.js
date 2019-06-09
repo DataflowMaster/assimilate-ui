@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';
 import './App.scss';
-import auth from './functions/auth';
+import auth from './functions/authenticate';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
@@ -19,17 +19,27 @@ class App extends Component {
 
   constructor (props) {
     super(props);
-    this.state = { loggedIn: props.loggedIn || false };
+    this.state = {
+      loggedIn: props.loggedIn || false,
+      user : props.user || {}
+    };
   }
-
   onLoginButtonClick (user,pass) {
-    let msj = auth.login(user,pass);
-    this.setState({ loggedIn:auth.isAuthenticated() });
-    return msj;
+    auth.login(user,pass).then(() => {
+      this.setState({
+        loggedIn:auth.isAuthenticated(),
+        user : auth.getuser()
+      });
+      console.log(user)
+    })
   }
 
   onLogOutButtonClick(){
     this.setState({ loggedIn:false })
+  }
+
+  getUser(){
+    return this.state.user;
   }
 
   render() {
@@ -42,7 +52,7 @@ class App extends Component {
               <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
               <Route path="/" name="Home" render={(props) => {
                 if(this.state.loggedIn){
-                  return (<DefaultLayout {...props} onButtonClick={()=> { this.onLogOutButtonClick()}}  />);
+                  return (<DefaultLayout {...props} onButtonClick={()=> { this.onLogOutButtonClick()}} user={this.getUser()} />);
                 }else{
                   return (<Login  {...props} onButtonClick={(user,pass) => { return this.onLoginButtonClick(user,pass) }} />);
                 }
