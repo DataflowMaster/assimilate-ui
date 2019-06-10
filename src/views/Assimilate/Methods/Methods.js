@@ -25,6 +25,7 @@ import {
   Label,
   Row, Table, ModalHeader, ModalBody, ModalFooter, Modal,
 } from 'reactstrap';
+import {postMethod} from "../../../functions/postMethod";
 
 const TableMethods = (props) =>{
   const methods = props.methods;
@@ -34,7 +35,7 @@ const TableMethods = (props) =>{
       <td> {method.name} </td>
       <td> {method.observation} </td>
       <td>
-        <Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>
+        {/*<Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>*/}
       </td>
     </tr>
   );
@@ -49,16 +50,41 @@ class Methods extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.saveMethod = this.saveMethod.bind(this);
+    this.changeInput = this.changeInput.bind(this);
 
     this.state = {
       modalAdd: false,
       collapse: true,
       fadeIn: true,
       timeout: 300,
-      isLoading: false
+      isLoading: false,
+      formMethod: "",
+      formDes : ""
     };
     getMethods(this.props.user.token).then((res)=>{
       this.setState({ isLoading : true, methods : res});
+    })
+    console.log(this.state)
+  }
+
+  changeInput(e){
+    if(e.target.id === "name"){
+      this.state.formMethod = e.target.value
+    }
+    if(e.target.id === "description"){
+      this.state.formDes= e.target.value
+    }
+  }
+  saveMethod(){
+    postMethod({
+      name : this.state.formMethod,
+      observation : this.state.formDes
+    },this.props.user.token).then( ()=> {
+      getMethods(this.props.user.token).then(res => {
+        this.setState({ methods : res});
+      });
+      this.toggleModal();
     })
   }
 
@@ -95,16 +121,21 @@ class Methods extends Component {
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
                     <Modal isOpen={this.state.modalAdd} toggle={this.toggleModal} className={this.props.className}>
-                      <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader>
+                      <ModalHeader toggle={this.toggleModal}>New Methods</ModalHeader>
                       <ModalBody>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                        culpa qui officia deserunt mollit anim id est laborum.
+                        <Form id="formMethod" >
+                          <FormGroup>
+                            <Label htmlFor="company" > Name </Label>
+                            <Input type="text" id="name" onChange={this.changeInput} placeholder="Enter the name of the ability" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Description </Label>
+                            <Input type="text" id="description" onChange={this.changeInput} placeholder="ability abstract" />
+                          </FormGroup>
+                        </Form>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="primary" onClick={this.toggleModal}>Add new Method</Button>{' '}
+                        <Button color="primary" onClick={this.saveMethod}>Add new Method</Button>{' '}
                         <Button color="secondary" onClick={this.toggleModal}>Cancel</Button>
                       </ModalFooter>
                     </Modal>

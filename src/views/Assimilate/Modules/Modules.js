@@ -22,24 +22,27 @@ import {
   InputGroupButtonDropdown,
   InputGroupText,
   Label,
-  Row, Table, ListGroupItem, ListGroup,
+  Row, Table, ListGroupItem, ListGroup, ModalHeader, ModalBody, ModalFooter, Modal,
 } from 'reactstrap';
 import {getModules} from "../../../functions/getModules";
+import {getAbilities} from "../../../functions/getAbilities";
 
 const TableModules = (props) =>{
   const modules = props.modules;
   const module = modules.map((module) =>
-
-    <tr key={module.idability} >
-      <td > {module.idability} </td>
-      <td> {module.module} </td>
+    <tr key={module.idmodules} >
+      <td > {module.idmodules} </td>
+      <td> {module.name} </td>
       <td> {module.descripcion} </td>
       <td>
         <ListGroup>
-        <ListGroupItem className="justify-content-between">Cras justo odio <Badge className="float-right" pill>14</Badge></ListGroupItem>
-        <ListGroupItem className="justify-content-between">Dapibus ac facilisis in <Badge className="float-right" pill>2</Badge></ListGroupItem>
-        <ListGroupItem className="justify-content-between">Morbi leo risus <Badge className="float-right" pill
-                                                                                  color="warning">1</Badge></ListGroupItem>
+        {
+          module.objectives.map(objective =>
+              <ListGroupItem key={objective.idability} className="justify-content-between" >
+                {objective.name} | {objective.type} <Badge className="float-right" pill> {objective.degree_importance} </Badge>
+              </ListGroupItem>
+          )
+        }
         </ListGroup>
       </td>
       <td>
@@ -53,23 +56,62 @@ const TableModules = (props) =>{
   );
 };
 
-
+const ListCapacities = (props) =>{
+  const abilities = props.abilities;
+  const ability = abilities.map((ability) =>
+      <option key={ability.idability} value={ability.idability}>{ability.name} | {ability.type}</option>
+  );
+  return (
+    <Input id="abilities" type="select" onChange={props.addCapacity} name="abilities">{ability}</Input>
+  );
+};
 
 class Modules extends Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+    this.saveModule = this.saveModule.bind(this);
+    this.addCapacity = this.addCapacity.bind(this);
 
     this.state = {
+      modalAdd: false,
       collapse: true,
       fadeIn: true,
       timeout: 300,
-      isLogin: false
+      isLogin: false,
+      isLoadingAbilities: false,
+      abilitytoSave: []
     };
+
     getModules(this.props.user.token,this.props.user.idprofessor).then(res => {
       this.setState({ isLoading : true, modules : res})
-    })
+    });
+
+    getAbilities(this.props.user.token).then((res => {
+      this.setState({ isLoadingAbilities : true, abilities : res});
+    }));
+  }
+
+
+  addCapacity(e){
+    let index = Number( e.target.value) - 1;
+    let add = {
+      index : e.target.value,
+      text : e.target.options[index].text
+    }
+    this.state.abilitytoSave.push(add);
+  }
+
+  saveModule(){
+
+  }
+
+  toggleModal() {
+    this.setState({
+      modalAdd: !this.state.modalAdd,
+    });
   }
 
   toggle() {
@@ -89,15 +131,41 @@ class Modules extends Component {
             <Fade timeout={this.state.timeout} in={this.state.fadeIn}>
               <Card>
                 <CardHeader>
-                  <i className="icon-layers"></i>Modules
+                  <i className="icon-layers"> </i> Modules
                   <div className="card-header-actions">
-                    <Button color="link" className="card-header-action btn-plus" onClick={this.renderAbilites}><i className="icon-plus"></i> Add</Button>
+
+                    <Button color="link" className="card-header-action btn-plus" onClick={this.toggleModal}><i className="icon-plus"></i> Add</Button>
                     <Button color="link" className="card-header-action btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></Button>
                     {/*<Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>*/}
                   </div>
                 </CardHeader>
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
+                    <Modal isOpen={this.state.modalAdd} toggle={this.toggleModal} className={this.props.className}>
+                      <ModalHeader toggle={this.toggleModal}>Add Module</ModalHeader>
+                      <ModalBody>
+                        <Form id="formCapacities" >
+                          <FormGroup>
+                            <Label htmlFor="company" > Name </Label>
+                            <Input type="text" id="name" onChange={this.changeInput} placeholder="Enter the name of the method" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="company" > Desciption </Label>
+                            <Input type="text" id="description" onChange={this.changeInput} placeholder="Enter a description" />
+                          </FormGroup>
+                          <Card>
+                            <CardBody>
+
+                            </CardBody>
+                          </Card>
+                          < ListCapacities abilities={this.state.abilities} addCapacity={this.addCapacity} />
+                        </Form>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button type="submit" color="primary" onClick={this.saveModule} form="formCapacities" >Add new Module</Button>
+                        <Button type="reset" color="secondary" onClick={this.toggleModal}>Cancel</Button>
+                      </ModalFooter>
+                    </Modal>
                     <Table hover bordered striped responsive size="sm">
                       <thead>
                       <tr>

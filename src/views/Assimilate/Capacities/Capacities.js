@@ -37,7 +37,7 @@ import {
         <td> {ability.name} </td>
         <td> {ability.type} </td>
         <td>
-          <Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>
+          {/*<Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>*/}
         </td>
       </tr>
     );
@@ -63,6 +63,7 @@ class Capacities extends Component {
     this.toggleFade = this.toggleFade.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.saveAbility = this.saveAbility.bind(this);
+    this.changeInput = this.changeInput.bind(this);
 
     getAbilities(this.props.user.token).then((res => {
       this.setState({ isLoading : true, abilities : res});
@@ -70,15 +71,23 @@ class Capacities extends Component {
 
   }
 
+  changeInput(e){
+    if(e.target.id === "name")
+      this.state.formAbility = e.target.value;
+    if(e.target.id === "type")
+      this.state.formType = e.target.value;
+  }
+
   saveAbility(){
-    console.log(this.state.formAbility)
-    // postAbility({
-    //   name: this.state.formAbility,
-    //   type: this.state.formType
-    // },this.props.user.token).then(result =>{
-    //   console.log(result)
-    //   this.toggleModal();
-    // })
+    postAbility({
+      name: this.state.formAbility,
+      type: this.state.formType
+    },this.props.user.token).then(result =>{
+      getAbilities(this.props.user.token).then((res => {
+        this.setState({ abilities : res});
+      }));
+      this.toggleModal();
+    })
   }
 
   toggleModal() {
@@ -119,11 +128,11 @@ class Capacities extends Component {
                         <Form id="formCapacities" >
                           <FormGroup>
                             <Label htmlFor="company" > Name </Label>
-                            <Input type="text" id="name" ref={e => this.state.formAbility = e} placeholder="Enter the name of the ability" />
+                            <Input type="text" id="name" onChange={this.changeInput} placeholder="Enter the name of the ability" />
                           </FormGroup>
                           <FormGroup>
                             <Label htmlFor="vat" > Type </Label>
-                            <Input type="text" id="type" placeholder="ability abstract" />
+                            <Input type="text" id="type" onChange={this.changeInput} placeholder="ability abstract" />
                           </FormGroup>
                         </Form>
                       </ModalBody>
@@ -142,9 +151,7 @@ class Capacities extends Component {
                         <th> </th>
                       </tr>
                       </thead>
-
                       <TableCapacities abilities={this.state.abilities} />
-
                     </Table>
                   </CardBody>
                 </Collapse>

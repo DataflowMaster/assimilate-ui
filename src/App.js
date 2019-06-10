@@ -30,7 +30,6 @@ class App extends Component {
         loggedIn:auth.isAuthenticated(),
         user : auth.getuser()
       });
-      console.log(user)
     })
   }
 

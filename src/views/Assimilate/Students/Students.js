@@ -25,6 +25,8 @@ import {
   Label,
   Row, Table, ButtonDropdown, Modal, ModalHeader, ModalBody, ModalFooter,
 } from 'reactstrap';
+import {postStudent} from "../../../functions/postStudent";
+import {getModules} from "../../../functions/getModules";
 
 const TableStudents = (props) =>{
   const students = props.students;
@@ -53,16 +55,67 @@ class Students extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.changeInput = this.changeInput.bind(this);
+    this.addModules = this.addModules.bind(this);
+    this.saveStudent = this.saveStudent.bind(this);
     this.state = {
       modalAdd: false,
       collapse: true,
       fadeIn: true,
       timeout: 300,
-      isLoading: false
+      isLoading: false,
+      isLoadinModule:false,
+      formName:'',
+      forLastnam:'',
+      formEmail:'',
+      formPhone:0,
+      formObs:'',
+      formModule:0
     };
-
+    console.log(props)
     getStudents(this.props.user.token,this.props.user.idprofessor).then( res => {
       this.setState({ isLoading : true, students : res});
+    })
+    getModules(this.props.user.token,this.props.user.idprofessor).then(res => {
+      this.setState({ isLoadinModule:true, modules : res})
+    });
+
+  }
+
+  changeInput(e){
+    if(e.target.id === "name")
+      this.state.formName = e.target.value
+    if(e.target.id === "lastname")
+      this.state.forLastnam = e.target.value
+    if(e.target.id === "email")
+      this.state.formEmail = e.target.value
+    if(e.target.id === "phone")
+      this.state.formPhone = e.target.value
+    if(e.target.id === "observation")
+      this.state.formObs = e.target.value
+  }
+
+  saveStudent(){
+    postStudent({
+      name : this.state.formName,
+      lastname : this.state.forLastnam,
+      email : this.state.formEmail,
+      phone : this.state.formPhone,
+      observation : this.state.formObs,
+      modules_idmodules: this.state.formModule,
+      modules_professor_idprofessor: this.props.user.idprofessor,
+      modules_professor_institution_idCentroEstudio:this.props.user.idinstitucion
+
+    },this.props.user.token).then( ()=> {
+      getStudents(this.props.user.token,this.props.user.idprofessor).then(res => {
+        this.setState({ students : res});
+      });
+      this.toggleModal();
+    })
+  }
+  addModules(e){
+    this.setState({
+      formModule : e.target.value
     })
   }
   toggleModal() {
@@ -80,7 +133,7 @@ class Students extends Component {
   }
 
   render() {
-    if (this.state.isLoading)
+    if (this.state.isLoading && this.state.isLoadinModule)
     return (
       <div className="animated fadeIn">
         <Row>
@@ -98,16 +151,44 @@ class Students extends Component {
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
                     <Modal isOpen={this.state.modalAdd} toggle={this.toggleModal} className={this.props.className}>
-                      <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader>
+                      <ModalHeader toggle={this.toggleModal}>New Student</ModalHeader>
                       <ModalBody>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                        culpa qui officia deserunt mollit anim id est laborum.
+                        <Form id="formstudent" >
+                          <FormGroup>
+                            <Label htmlFor="company" > Name </Label>
+                            <Input type="text" id="name" onChange={this.changeInput} placeholder="Name" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > LastName </Label>
+                            <Input type="text" id="lastname" onChange={this.changeInput} placeholder="LastName" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Email </Label>
+                            <Input type="email" id="email" onChange={this.changeInput} placeholder="Email" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Phone </Label>
+                            <Input type="number" id="phone" onChange={this.changeInput} placeholder="Phone" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Observation </Label>
+                            <Input type="text" id="observation" onChange={this.changeInput} placeholder="Observation" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Modules </Label>
+                            <Input id="modules" type="select" onChange={this.addModules} name="modules">
+                              <option >Select ... </option>
+                              {
+                                this.state.modules.map((module) =>
+                                  <option key={module.idmodules} value={module.idmodules}>{module.name} </option>
+                                )
+                              }
+                            </Input>
+                          </FormGroup>
+                        </Form>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="primary" onClick={this.toggleModal}>Add new Student</Button>{' '}
+                        <Button color="primary" onClick={this.saveStudent}>Add new Student</Button>{' '}
                         <Button color="secondary" onClick={this.toggleModal}>Cancel</Button>
                       </ModalFooter>
                     </Modal>
