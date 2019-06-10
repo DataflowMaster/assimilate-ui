@@ -278,7 +278,7 @@ class Evaluations extends Component {
       isLoading: false
     };
 
-    getEvaluations(this.props.user.token).then( res => {
+    getEvaluations(this.props.user.token,this.props.user.idprofessor).then( res => {
       this.setState({ isLoading : true, evaluations : res});
     })
   }

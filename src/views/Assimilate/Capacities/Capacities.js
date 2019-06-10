@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {getAbilities} from "../../../functions/getAbilities";
-
-
+import {postAbility} from "../../../functions/postAbility";
 import {
   Badge,
   Button,
@@ -56,15 +55,30 @@ class Capacities extends Component {
       collapse: true,
       fadeIn: true,
       timeout: 300,
-      isLoading: false
+      isLoading: false,
+      formAbility : '',
+      formType : ''
     };
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.saveAbility = this.saveAbility.bind(this);
 
     getAbilities(this.props.user.token).then((res => {
       this.setState({ isLoading : true, abilities : res});
     }));
+
+  }
+
+  saveAbility(){
+    console.log(this.state.formAbility)
+    // postAbility({
+    //   name: this.state.formAbility,
+    //   type: this.state.formType
+    // },this.props.user.token).then(result =>{
+    //   console.log(result)
+    //   this.toggleModal();
+    // })
   }
 
   toggleModal() {
@@ -100,17 +114,23 @@ class Capacities extends Component {
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
                     <Modal isOpen={this.state.modalAdd} toggle={this.toggleModal} className={this.props.className}>
-                      <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader>
+                      <ModalHeader toggle={this.toggleModal}>Add Ability</ModalHeader>
                       <ModalBody>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                        culpa qui officia deserunt mollit anim id est laborum.
+                        <Form id="formCapacities" >
+                          <FormGroup>
+                            <Label htmlFor="company" > Name </Label>
+                            <Input type="text" id="name" ref={e => this.state.formAbility = e} placeholder="Enter the name of the ability" />
+                          </FormGroup>
+                          <FormGroup>
+                            <Label htmlFor="vat" > Type </Label>
+                            <Input type="text" id="type" placeholder="ability abstract" />
+                          </FormGroup>
+                        </Form>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="primary" onClick={this.toggleModal}>Add new Capacity</Button>{' '}
-                        <Button color="secondary" onClick={this.toggleModal}>Cancel</Button>
+
+                        <Button type="submit" color="primary" onClick={this.saveAbility} form="formCapacities" >Add new Capacity</Button>
+                        <Button type="reset" color="secondary" onClick={this.toggleModal}>Cancel</Button>
                       </ModalFooter>
                     </Modal>
                     <Table hover bordered striped responsive size="sm">

@@ -67,7 +67,7 @@ class Modules extends Component {
       timeout: 300,
       isLogin: false
     };
-    getModules(this.props.user.token).then(res => {
+    getModules(this.props.user.token,this.props.user.idprofessor).then(res => {
       this.setState({ isLoading : true, modules : res})
     })
   }

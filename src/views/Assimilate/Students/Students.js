@@ -60,7 +60,8 @@ class Students extends Component {
       timeout: 300,
       isLoading: false
     };
-    getStudents(this.props.user.token).then( res => {
+
+    getStudents(this.props.user.token,this.props.user.idprofessor).then( res => {
       this.setState({ isLoading : true, students : res});
     })
   }
