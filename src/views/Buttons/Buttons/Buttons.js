@@ -599,7 +599,7 @@ class Buttons extends Component {
             <Row className="align-items-center mt-3">
               <Col sm xs="12" className="text-center mt-3">
                 <Button color="primary">
-                  <i className="fa fa-lightbulb-o"></i>&nbsp;Standard Button
+                  <i className="fa fa-window-close"></i>&nbsp;Standard Button
                 </Button>
               </Col>
               <Col sm xs="12" className="text-center mt-3">

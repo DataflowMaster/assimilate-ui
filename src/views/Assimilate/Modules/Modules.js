@@ -74,6 +74,8 @@ class Modules extends Component {
     this.toggleModal = this.toggleModal.bind(this);
     this.saveModule = this.saveModule.bind(this);
     this.addCapacity = this.addCapacity.bind(this);
+    this.changeInput = this.changeInput.bind(this);
+    this.delCapacity = this.delCapacity.bind(this);
 
     this.state = {
       modalAdd: false,
@@ -94,14 +96,31 @@ class Modules extends Component {
     }));
   }
 
+  changeInput(e){
+    if(e.target.id === "name")
+      this.setState({ name : e.target.value });
+    if(e.target.id === "description")
+      this.setState({ des : e.target.value });
+  }
 
   addCapacity(e){
     let index = Number( e.target.value) - 1;
     let add = {
       index : e.target.value,
       text : e.target.options[index].text
-    }
-    this.state.abilitytoSave.push(add);
+    };
+    let newvalue = this.state.abilitytoSave;
+    newvalue.push(add);
+    this.setState({
+      abilitytoSave: newvalue
+    })
+  }
+  delCapacity(e){
+    let del = this.state.abilitytoSave;
+    del.splice(e.target.id,1);
+    this.setState({
+      abilitytoSave: del
+    })
   }
 
   saveModule(){
@@ -123,7 +142,7 @@ class Modules extends Component {
   }
 
   render() {
-    if(this.state.isLoading)
+    if(this.state.isLoading && this.state.isLoadingAbilities)
     return (
       <div className="animated fadeIn">
         <Row>
@@ -155,10 +174,23 @@ class Modules extends Component {
                           </FormGroup>
                           <Card>
                             <CardBody>
+                              {
+                                this.state.abilitytoSave.map( (ability,index) =>
+                                  <div key={ability.index}>
+                                    <span> {ability.text}  <i className="fa fa-window-close" id={index} onClick={this.delCapacity}> </i>
+                                    </span>
+                                  </div>
 
+                                )
+                              }
                             </CardBody>
                           </Card>
-                          < ListCapacities abilities={this.state.abilities} addCapacity={this.addCapacity} />
+                          <Input id='aby' type="select" onChange={this.addCapacity}>{
+                            this.state.abilities.map(ability =>
+                              <option key={ability.idability} value={ability.idability}>{ability.name} | {ability.type}</option>
+                            )
+                          }
+                          </Input>
                         </Form>
                       </ModalBody>
                       <ModalFooter>
