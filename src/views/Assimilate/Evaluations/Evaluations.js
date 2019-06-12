@@ -15,7 +15,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle,
+  DropdownToggle, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader,
   Progress,
   Row,
   Table,
@@ -23,6 +23,11 @@ import {
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 import {getEvaluations} from "../../../functions/getEvaluations";
+import {getModules} from "../../../functions/getModules";
+import {getEvaluationObjectives} from "../../../functions/getEvaluationObjectives";
+import {getStudents} from "../../../functions/getStudents";
+import {getMethods} from "../../../functions/getMethods";
+import {postEvaluation} from "../../../functions/postEvaluation";
 
 const Widget03 = lazy(() => import('../../../views/Widgets/Widget03'));
 
@@ -478,19 +483,34 @@ const radar = {
     },
   ],
 };
+class Info extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      idevaluation : 0,
+      observation : '',
+      objectives:[]
+    }
+  }
+  render() {
+    return () =>
+      <div className="avatar"
+           onClick={this.props.showFullInfo}
+        // data-idevaluation={evaluation.idevaluations}
+        // data-obsMethod={evaluation.observation}
+        // data-objectives={evaluation.objectives}
+      >
+        <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+      </div>
+  }
+}
 
 const TableEvaluation = (props) => {
-  console.log(props)
   const evaluations = props.evaluations;
   const evaluation = evaluations.map((evaluation) =>
-    <tr key={evaluation.idevaluations} >
+    <tr key={evaluation.idevaluations} onClick={() => props.showFullInfo(evaluation)}>
       <td className="text-center">
-        <div className="avatar"
-             onClick={props.showFullInfo}
-             data-idevaluation={evaluation.idevaluations}
-             data-obsMethod={evaluation.observation}
-             data-objectives={evaluation.objectives}
-        >
+        <div className="avatar">
           <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
         </div>
       </td>
@@ -531,9 +551,9 @@ const TableEvaluation = (props) => {
     </tr>
   );
   return (
-    <tbody> { evaluation } </tbody>
+    <tbody>{evaluation}</tbody>
   )
-}
+};
 
 function convertDatetime(date){
   let aux = new Date(date);
@@ -548,25 +568,138 @@ class Evaluations extends Component {
     this.toggle = this.toggle.bind(this);
     this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
     this.showFullInfo = this.showFullInfo.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+    this.addModules = this.addModules.bind(this);
+    this.saveNewEvaluation = this.saveNewEvaluation.bind(this);
+    this.addCapacity = this.addCapacity.bind(this);
+    this.delCapacity = this.delCapacity.bind(this);
+    this.addMethod = this.addMethod.bind(this);
+    this.addStudents = this.addStudents.bind(this);
     this.state = {
+      modalAdd: false,
       dropdownOpen: false,
       radioSelected: 2,
       isLoading: false,
-
-    };
-
+      isLoadinModule: false,
+      isLoadingStudent:false,
+      isLoadingMethods:false,
+      selectRowEvaluation: {},
+      formModule: [],
+      repEvaluationObjectives:[],
+      abilitytoSave: [],
+      formMethod : 0,
+      formStudent : 0,
+      saveModule:0
+    }
     getEvaluations(this.props.user.token,this.props.user.idprofessor).then( res => {
       if(typeof res.error === "undefined")
-        this.setState({ isLoading : true, evaluations : res});
+        this.setState({ isLoading : true, evaluations : res, selectRowEvaluation : res[0] });
       else
         this.setState({ isLoading : true, evaluations : []});
     })
+    getModules(this.props.user.token,this.props.user.idprofessor).then(res => {
+      if(typeof  res.error === "undefined")
+        this.setState({ isLoadinModule:true, modules : res})
+      else
+        this.setState({ isLoadinModule:true, modules : []})
+    });
+    getStudents(this.props.user.token,this.props.user.idprofessor).then( res => {
+      this.setState({ isLoadingStudent : true, students : res});
+    })
+    getMethods(this.props.user.token).then((res)=>{
+      this.setState({ isLoadingMethods : true, methods : res});
+    })
+    console.log(props)
+  }
+  saveNewEvaluation(){
+    let today = new Date()
+    let mounth = (today.getMonth() + 1);
+    let ev = {
+      date : today.getFullYear()+"-"+mounth+"-"+today.getDate() ,
+      state : 1,
+      methods_idmethods : this.state.formMethod,
+      student_idstudent : this.state.formStudent,
+      withObjectives :  []
+    }
+
+    this.state.abilitytoSave.map( abilities => {
+      ev.withObjectives.push({
+        objectives_modules_idmodules : this.state.saveModule,
+        objectives_modules_professor_idprofessor: this.props.user.idprofessor,
+        objectives_modules_pro_ins_idCentroEstudio: this.props.user.idinstitucion,
+        objectives_ability_idability: abilities.ability_idability,
+        score : 0.0
+      })
+    })
+    postEvaluation(ev,this.props.user.token).then( ()=>{
+      getEvaluations(this.props.user.token,this.props.user.idprofessor).then( res => {
+        if(typeof res.error === "undefined")
+          this.setState({ isLoading : true, evaluations : res, selectRowEvaluation : res[0] });
+        else
+          this.setState({ isLoading : true, evaluations : []});
+        this.toggleModal();
+      })
+    })
+    console.log(ev)
+  }
+  addMethod(e){
+    this.setState({
+      formMethod : e.target.value
+    })
+  }
+  addStudents(e){
+    this.setState({
+      formStudent : e.target.value
+    })
+  }
+  delCapacity(e){
+    let del = this.state.abilitytoSave;
+    del.splice(e.target.id,1);
+    this.setState({
+      abilitytoSave: del
+    })
+  }
+  addCapacity(e){
+    let index = Number( e.target.value) - 1;
+    let add = {
+      ability_idability : e.target.value,
+      text : e.target.options[index].text
+    };
+    let newvalue = this.state.abilitytoSave;
+    newvalue.push(add);
+    this.setState({
+      abilitytoSave: newvalue
+    })
+  }
+  addModules(e){
+    this.state.modules.map( module => {
+      if(module.idmodules === Number(e.target.value) ){
+        this.setState({
+          formModule : module.objectives
+        })
+      }
+    });
+    this.state.saveModule = e.target.value;
+    getEvaluationObjectives(this.props.user.token, e.target.value ).then( eo => {
+      this.setState({
+        repEvaluationObjectives : eo
+      })
+    })
+
   }
 
   showFullInfo(e){
-    console.log(e.target)
+    this.setState( {
+      selectRowEvaluation : e
+    });
+    console.log(e)
   }
-  toggle() {
+  toggleModal() {
+    this.setState({
+      modalAdd: !this.state.modalAdd,
+    });
+  }
+  toggle(){
     this.setState({
       dropdownOpen: !this.state.dropdownOpen,
     });
@@ -579,141 +712,217 @@ class Evaluations extends Component {
   }
 
   render() {
-    if(this.state.isLoading)
+    if(this.state.isLoading && this.state.isLoadinModule && this.state.isLoadingStudent && this.state.isLoadingMethods)
     return (
       <div className="animated fadeIn">
-        <Row>
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-info">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown id='card1' isOpen={this.state.card1} toggle={() => { this.setState({ card1: !this.state.card1 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem disabled>Disabled action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
-                <Line data={cardChartData2} options={cardChartOpts2} height={70} />
-              </div>
-            </Card>
-          </Col>
+        {/*<Row>*/}
+        {/*  <Col xs="12" sm="6" lg="3">*/}
+        {/*    <Card className="text-white bg-info">*/}
+        {/*      <CardBody className="pb-0">*/}
+        {/*        <ButtonGroup className="float-right">*/}
+        {/*          <ButtonDropdown id='card1' isOpen={this.state.card1} toggle={() => { this.setState({ card1: !this.state.card1 }); }}>*/}
+        {/*            <DropdownToggle caret className="p-0" color="transparent">*/}
+        {/*              <i className="icon-settings"></i>*/}
+        {/*            </DropdownToggle>*/}
+        {/*            <DropdownMenu right>*/}
+        {/*              <DropdownItem>Action</DropdownItem>*/}
+        {/*              <DropdownItem>Another action</DropdownItem>*/}
+        {/*              <DropdownItem disabled>Disabled action</DropdownItem>*/}
+        {/*              <DropdownItem>Something else here</DropdownItem>*/}
+        {/*            </DropdownMenu>*/}
+        {/*          </ButtonDropdown>*/}
+        {/*        </ButtonGroup>*/}
+        {/*        <div className="text-value">9.823</div>*/}
+        {/*        <div>Members online</div>*/}
+        {/*      </CardBody>*/}
+        {/*      <div className="chart-wrapper mx-3" style={{ height: '70px' }}>*/}
+        {/*        <Line data={cardChartData2} options={cardChartOpts2} height={70} />*/}
+        {/*      </div>*/}
+        {/*    </Card>*/}
+        {/*  </Col>*/}
 
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-primary">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown id='card2' isOpen={this.state.card2} toggle={() => { this.setState({ card2: !this.state.card2 }); }}>
-                    <DropdownToggle className="p-0" color="transparent">
-                      <i className="icon-location-pin"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
-                <Line data={cardChartData1} options={cardChartOpts1} height={70} />
-              </div>
-            </Card>
-          </Col>
+        {/*  <Col xs="12" sm="6" lg="3">*/}
+        {/*    <Card className="text-white bg-primary">*/}
+        {/*      <CardBody className="pb-0">*/}
+        {/*        <ButtonGroup className="float-right">*/}
+        {/*          <Dropdown id='card2' isOpen={this.state.card2} toggle={() => { this.setState({ card2: !this.state.card2 }); }}>*/}
+        {/*            <DropdownToggle className="p-0" color="transparent">*/}
+        {/*              <i className="icon-location-pin"></i>*/}
+        {/*            </DropdownToggle>*/}
+        {/*            <DropdownMenu right>*/}
+        {/*              <DropdownItem>Action</DropdownItem>*/}
+        {/*              <DropdownItem>Another action</DropdownItem>*/}
+        {/*              <DropdownItem>Something else here</DropdownItem>*/}
+        {/*            </DropdownMenu>*/}
+        {/*          </Dropdown>*/}
+        {/*        </ButtonGroup>*/}
+        {/*        <div className="text-value">9.823</div>*/}
+        {/*        <div>Members online</div>*/}
+        {/*      </CardBody>*/}
+        {/*      <div className="chart-wrapper mx-3" style={{ height: '70px' }}>*/}
+        {/*        <Line data={cardChartData1} options={cardChartOpts1} height={70} />*/}
+        {/*      </div>*/}
+        {/*    </Card>*/}
+        {/*  </Col>*/}
 
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-warning">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown id='card3' isOpen={this.state.card3} toggle={() => { this.setState({ card3: !this.state.card3 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper" style={{ height: '70px' }}>
-                <Line data={cardChartData3} options={cardChartOpts3} height={70} />
-              </div>
-            </Card>
-          </Col>
+        {/*  <Col xs="12" sm="6" lg="3">*/}
+        {/*    <Card className="text-white bg-warning">*/}
+        {/*      <CardBody className="pb-0">*/}
+        {/*        <ButtonGroup className="float-right">*/}
+        {/*          <Dropdown id='card3' isOpen={this.state.card3} toggle={() => { this.setState({ card3: !this.state.card3 }); }}>*/}
+        {/*            <DropdownToggle caret className="p-0" color="transparent">*/}
+        {/*              <i className="icon-settings"></i>*/}
+        {/*            </DropdownToggle>*/}
+        {/*            <DropdownMenu right>*/}
+        {/*              <DropdownItem>Action</DropdownItem>*/}
+        {/*              <DropdownItem>Another action</DropdownItem>*/}
+        {/*              <DropdownItem>Something else here</DropdownItem>*/}
+        {/*            </DropdownMenu>*/}
+        {/*          </Dropdown>*/}
+        {/*        </ButtonGroup>*/}
+        {/*        <div className="text-value">9.823</div>*/}
+        {/*        <div>Members online</div>*/}
+        {/*      </CardBody>*/}
+        {/*      <div className="chart-wrapper" style={{ height: '70px' }}>*/}
+        {/*        <Line data={cardChartData3} options={cardChartOpts3} height={70} />*/}
+        {/*      </div>*/}
+        {/*    </Card>*/}
+        {/*  </Col>*/}
 
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-danger">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown id='card4' isOpen={this.state.card4} toggle={() => { this.setState({ card4: !this.state.card4 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
-                <Bar data={cardChartData4} options={cardChartOpts4} height={70} />
-              </div>
-            </Card>
-          </Col>
-        </Row>
+        {/*  <Col xs="12" sm="6" lg="3">*/}
+        {/*    <Card className="text-white bg-danger">*/}
+        {/*      <CardBody className="pb-0">*/}
+        {/*        <ButtonGroup className="float-right">*/}
+        {/*          <ButtonDropdown id='card4' isOpen={this.state.card4} toggle={() => { this.setState({ card4: !this.state.card4 }); }}>*/}
+        {/*            <DropdownToggle caret className="p-0" color="transparent">*/}
+        {/*              <i className="icon-settings"></i>*/}
+        {/*            </DropdownToggle>*/}
+        {/*            <DropdownMenu right>*/}
+        {/*              <DropdownItem>Action</DropdownItem>*/}
+        {/*              <DropdownItem>Another action</DropdownItem>*/}
+        {/*              <DropdownItem>Something else here</DropdownItem>*/}
+        {/*            </DropdownMenu>*/}
+        {/*          </ButtonDropdown>*/}
+        {/*        </ButtonGroup>*/}
+        {/*        <div className="text-value">9.823</div>*/}
+        {/*        <div>Members online</div>*/}
+        {/*      </CardBody>*/}
+        {/*      <div className="chart-wrapper mx-3" style={{ height: '70px' }}>*/}
+        {/*        <Bar data={cardChartData4} options={cardChartOpts4} height={70} />*/}
+        {/*      </div>*/}
+        {/*    </Card>*/}
+        {/*  </Col>*/}
+        {/*</Row>*/}
         <Row>
           <Col>
             <Card>
               <CardHeader>
-                <i className="icon-graph"></i> Evaluations - Method
+                <i className="icon-graph"></i> Evaluations - {this.state.selectRowEvaluation.method}
                 <div className="card-header-actions">
-                  <Button color="link" className="card-header-action btn-plus" onClick={this.renderAbilites}><i className="icon-plus"></i> Add</Button>
+                  <Button color="link" className="card-header-action btn-plus" onClick={this.toggleModal}><i className="icon-plus"></i> Add</Button>
+                  <Button color="link" className="card-header-action btn-plus" onClick={this.renderAbilites}><i className="icon-graph"></i> Evaluate </Button>
                   {/*<Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>*/}
                 </div>
               </CardHeader>
               <CardBody>
+                <Modal isOpen={this.state.modalAdd} toggle={this.toggleModal} className={this.props.className}>
+                  <ModalHeader toggle={this.toggleModal}>New Evaluationst</ModalHeader>
+                  <ModalBody>
+                    <Form id="formevaluation" >
+                      <FormGroup>
+                        <Label htmlFor="vat" > Modules </Label>
+                        <Input id="modules" type="select" onChange={this.addModules} name="modules">
+                          <option >Select ... </option>
+                          {
+                            this.state.modules.map((module) =>
+                              <option key={module.idmodules} value={module.idmodules}>{module.name} </option>
+                            )
+                          }
+                        </Input>
+                      </FormGroup>
+                      <FormGroup>
+                        <Label htmlFor="vat" > Students </Label>
+                        <Input id="modules" type="select" onChange={this.addStudents} name="modules">
+                          <option >Select ... </option>
+                          {
+                            this.state.students.map((student) =>
+                              <option key={student.idstudent} value={student.idstudent}>{student.name} {student.lastname} | {student.phone} </option>
+                            )
+                          }
+                        </Input>
+                      </FormGroup>
+                      <FormGroup>
+                        <Label htmlFor="vat" > Abilities </Label>
+                        <Card>
+                          <CardBody>
+                            <Table hover bordered striped responsive size="sm">
+                              <thead>
+                              <tr>
+                                <th>Ability</th>
+                                <th></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              {
+                                this.state.abilitytoSave.map( (ability,index) =>
+                                  <tr key={ability.ability_idability}>
+                                    <th> {ability.text} </th>
+                                    <th>  <i className="fa fa-window-close" id={index} onClick={this.delCapacity}> </i> </th>
+                                  </tr>
+                                )
+                              }
+                              </tbody>
+                            </Table>
+                          </CardBody>
+                        </Card>
+                        <Input id='aby' type="select" onChange={this.addCapacity}>
+                          {
+                            this.state.formModule.map(obj =>
+                              <option key={obj.idability} value={obj.idability}>{obj.name} | {obj.type}</option>
+                            )
+                          }
+                        </Input>
+                      </FormGroup>
+                      <FormGroup>
+                        <Label htmlFor="vat" > Methods </Label>
+                        <Input id="methods" type="select" onChange={this.addMethod} name="modules">
+                          <option >Select ... </option>
+                          {
+                            this.state.methods.map((method) =>
+                                <option key={method.idmethods} value={method.idmethods}>{method.name} </option>
+                            )
+                          }
+                        </Input>
+                      </FormGroup>
+                    </Form>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onClick={this.saveNewEvaluation}>Add new Evaluation</Button>{' '}
+                    <Button color="secondary" onClick={this.toggleModal}>Cancel</Button>
+                  </ModalFooter>
+                </Modal>
                 <Row>
                   <Col xs="12" md="6" xl="6">
                     <hr className="mt-0" />
-                    {/* barra de calificaciones */}
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
+                    {this.state.selectRowEvaluation.objectives.map( e =>
+                      <div key={e.idability} className="progress-group mb-4">
+                        <div className="progress-group-prepend">
                         <span className="progress-group-text">
-                        Tuesday
+                          {e.name}
                         </span>
+                        </div>
+                        <div className="progress-group-bars">
+                          <Progress className="progress-xs" color="info" value="0" />
+                          <Progress className="progress-xs" color="danger" value={e.score} />
+                        </div>
                       </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="56" />
-                        <Progress className="progress-xs" color="danger" value="94" />
-                      </div>
-                    </div>
-                    {/* Fin de barra de calificaciones */}
-
+                    )}
                   </Col>
                   <Col xs="12" md="6" xl="6">
                     <br/>
                     <hr className="mt-0" />
                     <ul>
-                      <h5> Nombre del alumno seleccionado</h5>
+                      <h5> {this.state.selectRowEvaluation.student} {this.state.selectRowEvaluation.lastname}</h5>
                       <hr className="mt-0" />
                       <div className="chart-wrapper">
                         <Radar data={radar} />
@@ -721,7 +930,7 @@ class Evaluations extends Component {
                       <br/>
                       <hr className="mt-0" />
                       <h6>Description of method:</h6>
-                      <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit .</p>
+                      <p> {this.state.selectRowEvaluation.observation} </p>
                     </ul>
                   </Col>
                 </Row>
