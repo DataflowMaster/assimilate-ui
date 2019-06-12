@@ -30,7 +30,7 @@ import {getModules} from "../../../functions/getModules";
 
 const TableStudents = (props) =>{
   const students = props.students;
-  const student = students.map((student) =>
+  const student = students.map((student,index) =>
     <tr key={student.idstudent} >
       <td > {student.idstudent} </td>
       <td> {student.name} </td>
@@ -39,7 +39,7 @@ const TableStudents = (props) =>{
       <td> {student.phone} </td>
       <td> {student.observation} </td>
       <td>
-        <Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>
+        <Button id={index} block outline color="dark" onClick={props.clickDelete} > Delete </Button>
       </td>
     </tr>
   );
@@ -58,6 +58,8 @@ class Students extends Component {
     this.changeInput = this.changeInput.bind(this);
     this.addModules = this.addModules.bind(this);
     this.saveStudent = this.saveStudent.bind(this);
+    this.clickDelete = this.clickDelete.bind(this);
+
     this.state = {
       modalAdd: false,
       collapse: true,
@@ -70,14 +72,19 @@ class Students extends Component {
       formEmail:'',
       formPhone:0,
       formObs:'',
-      formModule:0
+      formModule:0,
+      students:[]
     };
-    console.log(props)
+
     getStudents(this.props.user.token,this.props.user.idprofessor).then( res => {
+      console.log(res,"student")
       this.setState({ isLoading : true, students : res});
     })
     getModules(this.props.user.token,this.props.user.idprofessor).then(res => {
-      this.setState({ isLoadinModule:true, modules : res})
+      if(typeof  res.error === "undefined")
+        this.setState({ isLoadinModule:true, modules : res})
+      else
+        this.setState({ isLoadinModule:true, modules : []})
     });
 
   }
@@ -118,6 +125,15 @@ class Students extends Component {
       formModule : e.target.value
     })
   }
+
+  clickDelete(e){
+    let del = this.state.students;
+    del.splice(e.target.id,1);
+    this.setState({
+      students: del
+    })
+  }
+
   toggleModal() {
     this.setState({
       modalAdd: !this.state.modalAdd,
@@ -204,7 +220,7 @@ class Students extends Component {
                         <th> </th>
                       </tr>
                       </thead>
-                      < TableStudents students={this.state.students}  />
+                      < TableStudents students={this.state.students}  clickDelete={this.clickDelete} />
                     </Table>
                   </CardBody>
                 </Collapse>

@@ -24,14 +24,13 @@ import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 import {getEvaluations} from "../../../functions/getEvaluations";
 
-const Widget03 = lazy(() => import('./../../../views/Widgets/Widget03'));
+const Widget03 = lazy(() => import('../../../views/Widgets/Widget03'));
 
 const brandPrimary = getStyle('--primary')
 const brandSuccess = getStyle('--success')
 const brandInfo = getStyle('--info')
 const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
-
 
 // Card Chart 1
 const cardChartData1 = {
@@ -46,6 +45,51 @@ const cardChartData1 = {
   ],
 };
 
+const cardChartOpts1 = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        gridLines: {
+          color: 'transparent',
+          zeroLineColor: 'transparent',
+        },
+        ticks: {
+          fontSize: 2,
+          fontColor: 'transparent',
+        },
+
+      }],
+    yAxes: [
+      {
+        display: false,
+        ticks: {
+          display: false,
+          min: Math.min.apply(Math, cardChartData1.datasets[0].data) - 5,
+          max: Math.max.apply(Math, cardChartData1.datasets[0].data) + 5,
+        },
+      }],
+  },
+  elements: {
+    line: {
+      borderWidth: 1,
+    },
+    point: {
+      radius: 4,
+      hitRadius: 10,
+      hoverRadius: 4,
+    },
+  }
+}
+
+
 // Card Chart 2
 const cardChartData2 = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -59,6 +103,129 @@ const cardChartData2 = {
   ],
 };
 
+const cardChartOpts2 = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        gridLines: {
+          color: 'transparent',
+          zeroLineColor: 'transparent',
+        },
+        ticks: {
+          fontSize: 2,
+          fontColor: 'transparent',
+        },
+
+      }],
+    yAxes: [
+      {
+        display: false,
+        ticks: {
+          display: false,
+          min: Math.min.apply(Math, cardChartData2.datasets[0].data) - 5,
+          max: Math.max.apply(Math, cardChartData2.datasets[0].data) + 5,
+        },
+      }],
+  },
+  elements: {
+    line: {
+      tension: 0.00001,
+      borderWidth: 1,
+    },
+    point: {
+      radius: 4,
+      hitRadius: 10,
+      hoverRadius: 4,
+    },
+  },
+};
+
+// Card Chart 3
+const cardChartData3 = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'My First dataset',
+      backgroundColor: 'rgba(255,255,255,.2)',
+      borderColor: 'rgba(255,255,255,.55)',
+      data: [78, 81, 80, 45, 34, 12, 40],
+    },
+  ],
+};
+
+const cardChartOpts3 = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        display: false,
+      }],
+    yAxes: [
+      {
+        display: false,
+      }],
+  },
+  elements: {
+    line: {
+      borderWidth: 2,
+    },
+    point: {
+      radius: 0,
+      hitRadius: 10,
+      hoverRadius: 4,
+    },
+  },
+};
+
+// Card Chart 4
+const cardChartData4 = {
+  labels: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+  datasets: [
+    {
+      label: 'My First dataset',
+      backgroundColor: 'rgba(255,255,255,.3)',
+      borderColor: 'transparent',
+      data: [78, 81, 80, 45, 34, 12, 40, 75, 34, 89, 32, 68, 54, 72, 18, 98],
+    },
+  ],
+};
+
+const cardChartOpts4 = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        display: false,
+        barPercentage: 0.6,
+      }],
+    yAxes: [
+      {
+        display: false,
+      }],
+  },
+};
 
 // Social Box Chart
 const socialBoxData = [
@@ -67,6 +234,54 @@ const socialBoxData = [
   { data: [78, 81, 80, 45, 34, 12, 40], label: 'linkedin' },
   { data: [35, 23, 56, 22, 97, 23, 64], label: 'google' },
 ];
+
+const makeSocialBoxData = (dataSetNo) => {
+  const dataset = socialBoxData[dataSetNo];
+  const data = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        backgroundColor: 'rgba(255,255,255,.1)',
+        borderColor: 'rgba(255,255,255,.55)',
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: dataset.data,
+        label: dataset.label,
+      },
+    ],
+  };
+  return () => data;
+};
+
+const socialChartOpts = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  responsive: true,
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        display: false,
+      }],
+    yAxes: [
+      {
+        display: false,
+      }],
+  },
+  elements: {
+    point: {
+      radius: 0,
+      hitRadius: 10,
+      hoverRadius: 4,
+      hoverBorderWidth: 3,
+    },
+  },
+};
 
 // sparkline charts
 const sparkLineChartData = [
@@ -194,6 +409,50 @@ const mainChart = {
   ],
 };
 
+const mainChartOpts = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips,
+    intersect: true,
+    mode: 'ability_idability',
+    position: 'nearest',
+    callbacks: {
+      labelColor: function(tooltipItem, chart) {
+        return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor }
+      }
+    }
+  },
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        gridLines: {
+          drawOnChartArea: false,
+        },
+      }],
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+          maxTicksLimit: 5,
+          stepSize: Math.ceil(250 / 5),
+          max: 250,
+        },
+      }],
+  },
+  elements: {
+    point: {
+      radius: 0,
+      hitRadius: 10,
+      hoverRadius: 4,
+      hoverBorderWidth: 3,
+    },
+  },
+};
+
 const radar = {
   labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
   datasets: [
@@ -224,20 +483,25 @@ const TableEvaluation = (props) => {
   console.log(props)
   const evaluations = props.evaluations;
   const evaluation = evaluations.map((evaluation) =>
-    <tr key={evaluation.objectives_ability_idability}>
+    <tr key={evaluation.idevaluations} >
       <td className="text-center">
-        <div className="avatar">
+        <div className="avatar"
+             onClick={props.showFullInfo}
+             data-idevaluation={evaluation.idevaluations}
+             data-obsMethod={evaluation.observation}
+             data-objectives={evaluation.objectives}
+        >
           <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
         </div>
       </td>
       <td>
-        <div>{evaluation.name} {evaluation.lastname}</div>
+        <div>{evaluation.student} {evaluation.lastname} </div>
         <div className="small text-muted">
-          <span>{evaluation.phone}</span> | {evaluation.email}
+          <span> {evaluation.obsStudent} </span>
         </div>
       </td>
-      <td className="text-center">
-        <i className="flag-icon flag-icon-us h4 mb-0" title="us" id="us"></i>
+      <td>
+        <span>{evaluation.module }</span>
       </td>
       <td>
         <div className="clearfix">
@@ -251,11 +515,18 @@ const TableEvaluation = (props) => {
         <Progress className="progress-xs" color="success" value="60" />
       </td>
       <td className="text-center">
-        {evaluation.idmethods}
+        {evaluation.method}
+      </td>
+      <td className="text-center">
+        {
+          (evaluation.state === 1)&& <sup className="px-1"><Badge pill color="danger">&nbsp;</Badge></sup> ||
+          (evaluation.state === 2)&& <sup className="px-1"><Badge pill color="success">&nbsp;</Badge></sup>  ||
+          (evaluation.state === 0)&& <sup className="px-1"><Badge pill color="secondary">&nbsp;</Badge></sup>
+        }
       </td>
       <td>
         <div className="small text-muted">Date of creation</div>
-        <strong>{evaluation.date}</strong>
+        <strong>{convertDatetime (evaluation.date)}</strong>
       </td>
     </tr>
   );
@@ -264,6 +535,11 @@ const TableEvaluation = (props) => {
   )
 }
 
+function convertDatetime(date){
+  let aux = new Date(date);
+  let months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return aux.getFullYear() + " de " + months[aux.getMonth()] + " de " + aux.getDate()
+}
 
 class Evaluations extends Component {
   constructor(props) {
@@ -271,18 +547,25 @@ class Evaluations extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
-
+    this.showFullInfo = this.showFullInfo.bind(this);
     this.state = {
       dropdownOpen: false,
       radioSelected: 2,
-      isLoading: false
+      isLoading: false,
+
     };
 
     getEvaluations(this.props.user.token,this.props.user.idprofessor).then( res => {
-      this.setState({ isLoading : true, evaluations : res});
+      if(typeof res.error === "undefined")
+        this.setState({ isLoading : true, evaluations : res});
+      else
+        this.setState({ isLoading : true, evaluations : []});
     })
   }
 
+  showFullInfo(e){
+    console.log(e.target)
+  }
   toggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen,
@@ -300,10 +583,108 @@ class Evaluations extends Component {
     return (
       <div className="animated fadeIn">
         <Row>
+          <Col xs="12" sm="6" lg="3">
+            <Card className="text-white bg-info">
+              <CardBody className="pb-0">
+                <ButtonGroup className="float-right">
+                  <ButtonDropdown id='card1' isOpen={this.state.card1} toggle={() => { this.setState({ card1: !this.state.card1 }); }}>
+                    <DropdownToggle caret className="p-0" color="transparent">
+                      <i className="icon-settings"></i>
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem>Action</DropdownItem>
+                      <DropdownItem>Another action</DropdownItem>
+                      <DropdownItem disabled>Disabled action</DropdownItem>
+                      <DropdownItem>Something else here</DropdownItem>
+                    </DropdownMenu>
+                  </ButtonDropdown>
+                </ButtonGroup>
+                <div className="text-value">9.823</div>
+                <div>Members online</div>
+              </CardBody>
+              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
+                <Line data={cardChartData2} options={cardChartOpts2} height={70} />
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs="12" sm="6" lg="3">
+            <Card className="text-white bg-primary">
+              <CardBody className="pb-0">
+                <ButtonGroup className="float-right">
+                  <Dropdown id='card2' isOpen={this.state.card2} toggle={() => { this.setState({ card2: !this.state.card2 }); }}>
+                    <DropdownToggle className="p-0" color="transparent">
+                      <i className="icon-location-pin"></i>
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem>Action</DropdownItem>
+                      <DropdownItem>Another action</DropdownItem>
+                      <DropdownItem>Something else here</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </ButtonGroup>
+                <div className="text-value">9.823</div>
+                <div>Members online</div>
+              </CardBody>
+              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
+                <Line data={cardChartData1} options={cardChartOpts1} height={70} />
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs="12" sm="6" lg="3">
+            <Card className="text-white bg-warning">
+              <CardBody className="pb-0">
+                <ButtonGroup className="float-right">
+                  <Dropdown id='card3' isOpen={this.state.card3} toggle={() => { this.setState({ card3: !this.state.card3 }); }}>
+                    <DropdownToggle caret className="p-0" color="transparent">
+                      <i className="icon-settings"></i>
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem>Action</DropdownItem>
+                      <DropdownItem>Another action</DropdownItem>
+                      <DropdownItem>Something else here</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </ButtonGroup>
+                <div className="text-value">9.823</div>
+                <div>Members online</div>
+              </CardBody>
+              <div className="chart-wrapper" style={{ height: '70px' }}>
+                <Line data={cardChartData3} options={cardChartOpts3} height={70} />
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs="12" sm="6" lg="3">
+            <Card className="text-white bg-danger">
+              <CardBody className="pb-0">
+                <ButtonGroup className="float-right">
+                  <ButtonDropdown id='card4' isOpen={this.state.card4} toggle={() => { this.setState({ card4: !this.state.card4 }); }}>
+                    <DropdownToggle caret className="p-0" color="transparent">
+                      <i className="icon-settings"></i>
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      <DropdownItem>Action</DropdownItem>
+                      <DropdownItem>Another action</DropdownItem>
+                      <DropdownItem>Something else here</DropdownItem>
+                    </DropdownMenu>
+                  </ButtonDropdown>
+                </ButtonGroup>
+                <div className="text-value">9.823</div>
+                <div>Members online</div>
+              </CardBody>
+              <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
+                <Bar data={cardChartData4} options={cardChartOpts4} height={70} />
+              </div>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
           <Col>
             <Card>
               <CardHeader>
-                <i className="icon-graph"></i> Evaluations
+                <i className="icon-graph"></i> Evaluations - Method
                 <div className="card-header-actions">
                   <Button color="link" className="card-header-action btn-plus" onClick={this.renderAbilites}><i className="icon-plus"></i> Add</Button>
                   {/*<Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>*/}
@@ -311,60 +692,9 @@ class Evaluations extends Component {
               </CardHeader>
               <CardBody>
                 <Row>
-                  <Col sm="3">
-                    <div className="callout callout-info">
-                      <small className="text-muted">New Clients</small>
-                      <br />
-                      <strong className="h4">9,1</strong>
-                      <div className="chart-wrapper">
-                        <Line data={makeSparkLineData(0, brandPrimary)} options={sparklineChartOpts} width={100} height={30} />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col sm="3">
-                    <div className="callout callout-danger">
-                      <small className="text-muted">Recurring Clients</small>
-                      <br />
-                      <strong className="h4">2,6</strong>
-                      <div className="chart-wrapper">
-                        <Line data={makeSparkLineData(1, brandDanger)} options={sparklineChartOpts} width={100} height={30} />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col sm="3">
-                    <div className="callout callout-warning">
-                      <small className="text-muted">Pageviews</small>
-                      <br />
-                      <strong className="h4">7,6</strong>
-                      <div className="chart-wrapper">
-                        <Line data={makeSparkLineData(2, brandWarning)} options={sparklineChartOpts} width={100} height={30} />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col sm="3">
-                    <div className="callout callout-success">
-                      <small className="text-muted">Organic</small>
-                      <br />
-                      <strong className="h4">4,2</strong>
-                      <div className="chart-wrapper">
-                        <Line data={makeSparkLineData(3, brandSuccess)} options={sparklineChartOpts} width={100} height={30} />
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
                   <Col xs="12" md="6" xl="6">
                     <hr className="mt-0" />
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Monday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="danger" value="78" />
-                      </div>
-                    </div>
+                    {/* barra de calificaciones */}
                     <div className="progress-group mb-4">
                       <div className="progress-group-prepend">
                         <span className="progress-group-text">
@@ -376,74 +706,22 @@ class Evaluations extends Component {
                         <Progress className="progress-xs" color="danger" value="94" />
                       </div>
                     </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                        Wednesday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="12" />
-                        <Progress className="progress-xs" color="danger" value="67" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                        Thursday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="43" />
-                        <Progress className="progress-xs" color="danger" value="91" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                        Friday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="22" />
-                        <Progress className="progress-xs" color="danger" value="73" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                        Saturday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="53" />
-                        <Progress className="progress-xs" color="danger" value="82" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                        Sunday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="9" />
-                        <Progress className="progress-xs" color="danger" value="69" />
-                      </div>
-                    </div>
-                    <sup className="px-1"><Badge pill color="danger">&nbsp;</Badge></sup>
-                    <sup className="px-1"><Badge pill color="success">&nbsp;</Badge></sup>
-                    <sup className="px-1"><Badge pill color="warning">&nbsp;</Badge></sup>
+                    {/* Fin de barra de calificaciones */}
+
                   </Col>
                   <Col xs="12" md="6" xl="6">
+                    <br/>
                     <hr className="mt-0" />
                     <ul>
-                      <h5> Yiorgos Avraamu</h5>
+                      <h5> Nombre del alumno seleccionado</h5>
+                      <hr className="mt-0" />
                       <div className="chart-wrapper">
                         <Radar data={radar} />
                       </div>
+                      <br/>
+                      <hr className="mt-0" />
                       <h6>Description of method:</h6>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doLorem ipsum dolor sit amet, consectetur adipisicing elit .</p>
                     </ul>
                   </Col>
                 </Row>
@@ -456,10 +734,11 @@ class Evaluations extends Component {
                     <th className="text-center">Module</th>
                     <th>Degree of achievement</th>
                     <th className="text-center">Method</th>
+                    <th className="text-center">State</th>
                     <th>Date Activity</th>
                   </tr>
                   </thead>
-                  <TableEvaluation evaluations={this.state.evaluations} />
+                  <TableEvaluation evaluations={this.state.evaluations} showFullInfo={this.showFullInfo} />
                 </Table>
               </CardBody>
             </Card>

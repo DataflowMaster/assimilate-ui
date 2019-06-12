@@ -31,13 +31,13 @@ import {
 
   const TableCapacities = (props) =>{
     const abilities = props.abilities;
-    const ability = abilities.map((ability) =>
+    const ability = abilities.map((ability,index) =>
       <tr key={ability.idability} >
         <td > {ability.idability} </td>
         <td> {ability.name} </td>
         <td> {ability.type} </td>
         <td>
-          {/*<Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>*/}
+          <Button id={index} block outline color="dark" onClick={props.clickDelete} > Delete </Button>
         </td>
       </tr>
     );
@@ -64,6 +64,7 @@ class Capacities extends Component {
     this.toggleModal = this.toggleModal.bind(this);
     this.saveAbility = this.saveAbility.bind(this);
     this.changeInput = this.changeInput.bind(this);
+    this.clickDelete = this.clickDelete.bind(this);
 
     getAbilities(this.props.user.token).then((res => {
       this.setState({ isLoading : true, abilities : res});
@@ -90,6 +91,14 @@ class Capacities extends Component {
     })
   }
 
+  clickDelete(e){
+    let del = this.state.abilities;
+    del.splice(e.target.id,1);
+    this.setState({
+      abilities: del
+    })
+  }
+
   toggleModal() {
     this.setState({
       modalAdd: !this.state.modalAdd,
@@ -113,7 +122,7 @@ class Capacities extends Component {
             <Fade timeout={this.state.timeout} in={this.state.fadeIn}>
               <Card>
                 <CardHeader>
-                  <i className="icon-rocket"></i>Capacities
+                  <i className="icon-rocket"> </i>Capacities
                   <div className="card-header-actions">
                     <Button color="link" className="card-header-action btn-plus" onClick={this.toggleModal}><i className="icon-plus"></i> Add</Button>
                     <Button color="link" className="card-header-action btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></Button>
@@ -151,7 +160,7 @@ class Capacities extends Component {
                         <th> </th>
                       </tr>
                       </thead>
-                      <TableCapacities abilities={this.state.abilities} />
+                      <TableCapacities abilities={this.state.abilities} clickDelete={this.clickDelete} />
                     </Table>
                   </CardBody>
                 </Collapse>

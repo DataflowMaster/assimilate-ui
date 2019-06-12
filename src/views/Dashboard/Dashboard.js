@@ -413,7 +413,7 @@ const mainChartOpts = {
     enabled: false,
     custom: CustomTooltips,
     intersect: true,
-    mode: 'index',
+    mode: 'ability_idability',
     position: 'nearest',
     callbacks: {
       labelColor: function(tooltipItem, chart) {

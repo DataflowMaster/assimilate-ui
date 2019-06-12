@@ -1,6 +1,9 @@
+let l = window.location;
+let address = l.protocol+"//"+l.hostname+':8080';
+console.log(address)
 export function post(service,data,token){
   token = (typeof token === "undefined" )? "" : 'Bearer '+ token;
-  return fetch('http://localhost:8080'+service,
+  return fetch(address+service,
     {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -17,7 +20,7 @@ export function post(service,data,token){
 }
 
 export function get(service,token) {
-  return fetch('http://localhost:8080'+service,{
+  return fetch(address+service,{
     method: 'GET',
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     // credentials: '' // include, *same-origin, omit

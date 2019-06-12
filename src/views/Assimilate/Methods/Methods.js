@@ -29,13 +29,13 @@ import {postMethod} from "../../../functions/postMethod";
 
 const TableMethods = (props) =>{
   const methods = props.methods;
-  const method = methods.map((method) =>
+  const method = methods.map((method,index) =>
     <tr key={method.idmethods} >
       <td > {method.idmethods} </td>
       <td> {method.name} </td>
       <td> {method.observation} </td>
       <td>
-        {/*<Button block outline color="dark" onClick={props.toggleModal} > Delete </Button>*/}
+        <Button id={index} block outline color="dark" onClick={props.clickDelete} > Delete </Button>
       </td>
     </tr>
   );
@@ -52,7 +52,7 @@ class Methods extends Component {
     this.toggleModal = this.toggleModal.bind(this);
     this.saveMethod = this.saveMethod.bind(this);
     this.changeInput = this.changeInput.bind(this);
-
+    this.clickDelete = this.clickDelete.bind(this);
     this.state = {
       modalAdd: false,
       collapse: true,
@@ -65,7 +65,6 @@ class Methods extends Component {
     getMethods(this.props.user.token).then((res)=>{
       this.setState({ isLoading : true, methods : res});
     })
-    console.log(this.state)
   }
 
   changeInput(e){
@@ -87,7 +86,13 @@ class Methods extends Component {
       this.toggleModal();
     })
   }
-
+  clickDelete(e){
+    let del = this.state.methods;
+    del.splice(e.target.id,1);
+    this.setState({
+      methods: del
+    })
+  }
   toggleModal() {
     this.setState({
       modalAdd: !this.state.modalAdd,
@@ -148,7 +153,7 @@ class Methods extends Component {
                         <th> </th>
                       </tr>
                       </thead>
-                      < TableMethods methods={this.state.methods} />
+                      < TableMethods methods={this.state.methods} clickDelete={this.clickDelete} />
                     </Table>
                   </CardBody>
                 </Collapse>
